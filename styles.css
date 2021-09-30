@@ -1,0 +1,35 @@
+.container0 {
+    margin-top: 150px;
+    align-items: center;
+}
+
+.container0 > button {
+    font-size: large;
+    height: 60px;
+    width: 125px;
+    margin-left: 20px;
+}
+
+.container0 > h1 {
+    margin-right: 190px;
+    font-size: 50px;
+}
+
+.container0, .container1, .container2, .container3 {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+}
+
+.child {
+    background-color: aqua;
+    width: 200px;
+    height: 200px;
+    margin: 20px;
+    border-radius: 25px;;
+}
+
+span {
+    display: table;
+    margin: 0 auto;
+}
