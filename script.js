@@ -1,73 +1,70 @@
-const children = document.querySelectorAll(".child");
-const colorText = document.querySelector(".colorText");
-const button = document.querySelector("button");
+const cells = document.querySelectorAll('.cell');
+const colorText = document.querySelector('#colorText');
 
-let won = 0;
+let winningColorIndex = Math.floor(Math.random() * (8 - 0 + 1) + 0);
+let winningHexColor = "";
+let colorSet = new Set();
 
-// let hexColor = "#" + ((1<<24)*Math.random() | 0).toString(16);
-let hexColor = "";
-let rgbColor = "";
+let won = false;
 
-function init() {
-
-    if (won === 1) {
-        won = 0;
-        document.querySelector("span").removeChild(document.querySelector("span h1"));
-    }
-
-    children.forEach((child) => {
-        child.style.visibility = "visible";
-    });
-
-    let i = 0;
-
-    const random = (min = 0, max = 50) => {
-        let num = Math.random() * (max - min) + min;
-        return Math.floor(num);
-    };
-
-    let index = random(min = 0, max = 8);
-
-    children.forEach((child) => {
-        let temp = "#" + ((1<<24)*Math.random() | 0).toString(16)
-        child.style.backgroundColor = temp;
-        if (i === index) {
-            hexColor = temp; 
-            rgbColor = child.style.backgroundColor;
-        }
-        i++;
-    });
-
-    colorText.innerHTML = "Color: " + hexColor;
+function changeAllCellColors(hexCode) {
+    cells.forEach((cell) => {
+        cell.style.backgroundColor = hexCode;
+    })
 }
 
-function start() {
+function initCells() {
+    winningColorIndex = Math.floor(Math.random() * (8 - 0 + 1) + 0);
 
-    init();
+    cells.forEach((cell, index) => {
+        let randomHexColor = "#" + ((1<<24)*Math.random() | 0).toString(16);
 
-    button.addEventListener('click', () => {
-        init();
+        while (colorSet.has(randomHexColor)) {
+            randomHexColor = "#" + ((1<<24)*Math.random() | 0).toString(16);
+        }
+
+        colorSet.add(randomHexColor);
+        cell.style.backgroundColor = randomHexColor;
+
+        if (index === winningColorIndex) {
+            winningHexColor = randomHexColor; 
+            colorText.textContent = `Hex Color: ${winningHexColor}`;
+        }
+
+        function handleCellClick() {
+            if (won) return;
+
+            if (index === winningColorIndex) {
+                setAllCellsVisible();
+                changeAllCellColors(winningHexColor);
+                colorText.textContent = `You Won!!! ${winningHexColor}`;
+                won = true;
+            } else {
+                cell.style.opacity = '0';
+                setTimeout(() => {
+                    cell.style.visibility = 'hidden';
+                }, 300);
+            }
+        }
+
+        cell.addEventListener('click', handleCellClick);
     });
-    
-    children.forEach(child => child.addEventListener("click", () => {
-        if (child.style.backgroundColor === rgbColor && won === 0) {
-            var youWin = document.createElement("h1");
-            var newText = document.createTextNode("you win :)");
-            youWin.appendChild(newText);
-            var element = document.querySelector("span");
-            element.appendChild(youWin);
-            won = 1;
+};
 
-            children.forEach((child) => {
-                child.style.visibility = "visible";
-                child.style.backgroundColor = rgbColor;
-            });
-        }
-        else if (won === 1);
-        else {
-            child.style.visibility = "hidden";
-        }
-    }));
-}
+function setAllCellsVisible() {
+    cells.forEach((cell) => {
+        cell.style.opacity = '1';
+        cell.style.visibility = 'visible';
+    });
+};
 
-start();
+const resetButton = document.querySelector('#reset');
+
+resetButton.addEventListener('click', (e) => {
+    initCells();
+    setAllCellsVisible();
+    colorSet.clear();
+    won = false;
+});
+
+initCells();
